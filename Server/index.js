@@ -17,8 +17,16 @@ const db=mysql.createConnection({
 })
 
 app.get("/",(req,res)=>{
-    res.json("Hello this is backend")
+    res.json("Hello this is backend of EzPark")
 })
+
+app.get("/badges", (req, res) => {
+    const q = "SELECT * FROM EzPark.Badge_Details;";
+    db.query(q, (err, data) => {
+      if (err) return res.json(err);
+      return res.json(data);
+    });
+  });
 
 app.get("/user",(req,res)=>{
     const query="SELECT * FROM User_Details"
@@ -52,5 +60,5 @@ app.post("/user",(req,res)=>{
 })
 
 app.listen(8800, ()=>{
-    console.log("Connected to backend!2")
+    console.log("Connected to backend!!")
 })
