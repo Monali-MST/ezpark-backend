@@ -1,3 +1,5 @@
+import {} from 'dotenv/config'
+
 import express from "express";
 import mysql from "mysql";
 import cors from "cors";
@@ -6,6 +8,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+
+//------Connect to the Database----------
 const db = mysql.createConnection({
   host: "ezpark-db.cvhbqqtsx1je.ap-northeast-1.rds.amazonaws.com",
   user: "admin",
@@ -17,6 +21,53 @@ app.get("/", (req, res) => {
   res.json("Hello this is backend of EzPark");
 });
 
+
+//---------------------stripe CheckoutPayButton API start-----------------------
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+)
+
+// const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
+import Stripe from 'stripe';
+const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
+
+const storeItems = new Map([
+  [1, { priceInCents: 10000, name: "Slot Name: Zone C -20" }]
+])
+
+app.post("/create-checkout-session", async (req, res) => {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: req.body.items.map(item => {
+        const storeItem = storeItems.get(item.id)
+        return {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: storeItem.name,
+            },
+            unit_amount: storeItem.priceInCents,
+          },
+          quantity: item.quantity,
+        }
+      }),
+      success_url: `http://localhost:3000/successpay`,
+      cancel_url: `http://localhost:3000/closepay`,
+    })
+    res.json({ url: session.url })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+//---------------------stripe CheckoutPayButton API end-----------------------
+
+
+//------PointSystem details Page Backend----------
 app.get("/badges", (req, res) => {
   const q = "SELECT * FROM EzPark.Badge_Details;";
   db.query(q, (err, data) => {
@@ -49,7 +100,7 @@ app.get("/pointActions", (req, res) => {
     });
   });
   
-
+//------User Registration page Backend----------
 app.get("/user", (req, res) => {
   const query = "SELECT * FROM User_Details";
   db.query(query, (err, data) => {
@@ -81,6 +132,8 @@ app.post("/user", (req, res) => {
   });
 });
 
+
+//------Connect to the Backend Server----------
 app.listen(8800, () => {
   console.log("Connected to backend!!");
 });
