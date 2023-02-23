@@ -99,7 +99,35 @@ app.get("/pointActions", (req, res) => {
       return res.json(data);
     });
   });
-  
+//------PointSystem user points increment functions Backend----------
+// app.get("/pointsadd", (req, res) => {
+//   const q = "SELECT * FROM incrememtdb.user_details;";
+//   db.query(q, (err, data) => {
+//     if (err) return res.json(err);
+//     return res.json(data);
+//   });
+// });
+
+
+// app.put("/pointsadd:iduser_details", (req, res) => {
+//   const userId = req.params.iduser_details;
+//   // let x = 100;
+//   // x = x + 5;
+//   const q =
+//     "UPDATE `incrememtdb`.`user_details` SET `noofpoints` = ? WHERE (`iduser_details` = ?);";
+//   const values = [
+//     req.body.addPoints,
+//     req.body.currentPoints,
+//   ];
+
+//   db.query(q, [values[0]+values[1], userId], (err, data) => {
+//     if (err) return res.json(err);
+//     return res.json("book has been updated successfully");
+//   });
+// });
+
+
+
 //------User Registration page Backend----------
 app.get("/user", (req, res) => {
   const query = "SELECT * FROM User_Details";
