@@ -1,12 +1,12 @@
 const express = require('express')
 const router = express.Router()
 
-var get_badges = require('../api_operations/operations_1/show_system_details/get_badges')
-var get_pointActions = require('../api_operations/operations_1/show_system_details/get_pointActions')
-var get_discounts = require('../api_operations/operations_1/show_system_details/get_discounts')
-var get_Refund_Level = require('../api_operations/operations_1/show_system_details/get_Refund_Level')
-var send_refund_request = require('../api_operations/operations_1/show_system_details/get_discounts')
-var pay = require('../api_operations/operations_1/show_system_details/get_Refund_Level')
+var get_badges = require('../api_operations_1/operations_1/show_p_system_details/get_badges')
+var get_pointActions = require('../api_operations_1/operations_1/show_p_system_details/get_pointActions')
+var get_discounts = require('../api_operations_1/operations_1/show_p_system_details/get_discounts')
+var get_Refund_Level = require('../api_operations_1/operations_1/refund/get_Refund_Level')
+var send_refund_request = require('../api_operations_1/operations_1/refund_request/send_refund_request')
+// var pay = require('../api_operations/operations_1/show_system_details/get_Refund_Level')
 
 
 router.get('/get/badges' ,(req,res,next)=>{

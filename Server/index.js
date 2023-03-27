@@ -5,7 +5,7 @@ var path = require('path')
 const dotenv = require('dotenv');
 var app = express();
 
-var stripe_API = require('./stripe/stripe_API')
+// var stripe_API = require('./stripe/stripe_API')
 const operations_1_route = require('./routes/operations_1_route')
 
 dotenv.config();

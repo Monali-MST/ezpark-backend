@@ -8,7 +8,7 @@ var connection = mysql.createConnection({
 });
 connection.connect(function(err) {
     if (err) throw err;
-    console.log("connected to ezpark_local")
+    console.log("connected to Ezpark database")
   });
 
 module.exports = connection
