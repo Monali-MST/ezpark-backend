@@ -5,6 +5,7 @@ var get_badges = require('../api_operations_1/operations_1/show_p_system_details
 var get_pointActions = require('../api_operations_1/operations_1/show_p_system_details/get_pointActions')
 var get_discounts = require('../api_operations_1/operations_1/show_p_system_details/get_discounts')
 var get_Refund_Level = require('../api_operations_1/operations_1/refund/get_Refund_Level')
+var get_refund_request = require('../api_operations_1/operations_1/refund_request/get_refund_request')
 var send_refund_request = require('../api_operations_1/operations_1/refund_request/send_refund_request')
 // var pay = require('../api_operations/operations_1/show_system_details/get_Refund_Level')
 
@@ -25,7 +26,11 @@ router.get('/get/refund_level' ,(req,res,next)=>{
     get_Refund_Level(req , res)
 })
 
-router.get('/get/send_refund_request' ,(req,res,next)=>{        
+router.get('/get/get_refund_request' ,(req,res,next)=>{        
+    get_refund_request(req , res)
+})
+
+router.post('/post/send_refund_request' ,(req,res,next)=>{        
     send_refund_request(req , res)
 })
 
