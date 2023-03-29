@@ -1,0 +1,7 @@
+npm install express dotenv jsonwebtoken
+
+npm i generate-password
+
+npm install nodemailer
+
+npm i stripe 
