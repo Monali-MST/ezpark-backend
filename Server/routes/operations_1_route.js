@@ -7,6 +7,7 @@ var get_discounts = require('../api_operations_1/operations_1/show_p_system_deta
 var get_Refund_Level = require('../api_operations_1/operations_1/refund/get_Refund_Level')
 var get_refund_request = require('../api_operations_1/operations_1/refund_request/get_refund_request')
 var send_refund_request = require('../api_operations_1/operations_1/refund_request/send_refund_request')
+var reject_refund_request = require('../api_operations_1/operations_1/refund_request/reject_refund_request')
 // var pay = require('../api_operations/operations_1/show_system_details/get_Refund_Level')
 
 
@@ -34,9 +35,9 @@ router.post('/post/send_refund_request' ,(req,res,next)=>{
     send_refund_request(req , res)
 })
 
-// post refund requests using, send_refund_request
-
-// get refund requests using, get_refund_request
+router.delete('/response/reject_refund_request:id' ,(req,res,next)=>{        
+    reject_refund_request(req , res)
+})
 
 
 

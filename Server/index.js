@@ -59,7 +59,11 @@ app.post("/create-checkout-session", async (req, res) => {
 });
 
 //---------------------stripe CheckoutPayButton API end-----------------------
+app.get("/", (req, res) => {
+  res.json("Hello this is backend of EzPark");
+});
 
 app.listen(process.env.PORT, () => {
   console.log("server started in port : ", process.env.PORT);
 });
+
