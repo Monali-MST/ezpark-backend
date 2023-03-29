@@ -131,6 +131,38 @@ app.get("/pointActions", (req, res) => {
 
 
 //------Static View Page Backend---------------------------------
+//BOOKED SLOTS BEGINS
+app.get("/bookedSlots",(req, res)=>{
+  const queryBS= "SELECT * FROM slot WHERE availability=0 AND Enability=1;"
+  let bookedSlots;
+  db.query(queryBS,(errorBS, resultsBS)=>{
+    if(errorBS)return res.json(errorBS);
+    bookedSlots = 0;
+    resultsBS.forEach(row1=>{
+      bookedSlots++;
+    });
+    res.json({ bookedSlots });
+  });
+})
+//BOOKED SLOTS ENDS
+
+
+
+//AVAILABLE SLOTS BEGINS
+app.get("/availableSlots",(req, res)=>{
+  const queryAS= "SELECT * FROM slot WHERE availability=1 AND Enability = 1;"
+  let availableSlots;
+  db.query(queryAS,(errorAS, resultsAS)=>{
+    if(errorAS)return res.json(errorAS);
+    availableSlots = 0;
+    resultsAS.forEach(row1=>{
+      availableSlots++;
+    });
+    res.json({ availableSlots });
+  });
+})
+//AVAILABLE SLOTS ENDS
+
 //BOOKINGS AND CANCELLATIONS STARTS
 app.get ("/bookingDaily",(req, res)=>{//daily dookings and cancellations
   const query1="SELECT *FROM Booking WHERE BookedDate=date (now()) ;";
@@ -154,7 +186,7 @@ app.get ("/bookingDaily",(req, res)=>{//daily dookings and cancellations
     });
 });
 
-app.get ("/bookingWeekly",(req, res)=>{//bookings and cancellation of the week
+app.get ("/bookingWeekly",(req, res)=>{//bookings and cancellations of the week
   const query1="SELECT * FROM Booking where BookedDate between adddate(now(),-7) and now();"
   const query2="SELECT * FROM BookingCancellation where CancelDate between adddate(now(),-7) and now();"
   let Booking,Cancellation;
@@ -204,47 +236,47 @@ app.get ("/bookingWeekly",(req, res)=>{//bookings and cancellation of the week
 //BOOKINGS AND CANCELLATIONS ENDS
 
 //REVENUE PART BEGINS
-app.get("/revenueMonthly", (req,res)=>{//MONTHLY
+app.get("/revenueMonthly", (req,res)=>{//Revenue MONTHLY
   const queryMR="SELECT PaymentDate,SUM(PaymentAmount) AS TotalRevenueMonthly FROM Payment_Details WHERE MONTH(PaymentDate)=MONTH(now()) GROUP BY date(PaymentDate) ORDER BY date(PaymentDate);";
   db.query(queryMR, (error, results, fields) =>{
       if(error) return res.json(error)
       const rows=results.map(row => {
-          const UserData={};
+          const RevMData={};
           fields.forEach(field =>{
-              UserData[field.name] = row[field.name];
+            RevMData[field.name] = row[field.name];
           });
-          return UserData;
+          return RevMData;
       });
       return  res.json(rows);
       });
 })
 
-app.get("/revenueWeekly", (req,res)=>{//WEEKLY
+app.get("/revenueWeekly", (req,res)=>{//revenue WEEKLY
   const queryW="SELECT PaymentDate, (PaymentAmount) AS TotalRevenueWeekly FROM Payment_Details WHERE PaymentDate BETWEEN date (now())-6 AND date (now())+1 GROUP BY date(PaymentDate) ORDER BY date(PaymentDate);";
   db.query(queryW, (error, results, fields) =>{
       if(error) return res.json(error)
       const rows=results.map(row => {
-          const UserData={};
+          const RevWData={};
           fields.forEach(field =>{
               console.log(row);
-              UserData[field.name] = row[field.name];
+              RevWData[field.name] = row[field.name];
           });
-          return UserData; 
+          return RevWData; 
       });
       return  res.json(rows);
       });
 })
 
-app.get("/revenueDaily", (req,res)=>{//DAILY
+app.get("/revenueDaily", (req,res)=>{//revenue DAILY
   const queryD="SELECT PaymentDate, SUM(PaymentAmount) AS TotalRevenueDaily FROM Payment_Details WHERE PaymentDate=date (now());";
   db.query(queryD, (error, results, fields) =>{
       if(error) return res.json(error)
       const rows=results.map(row => {
-          const UserData={};
+          const RevDData={};
           fields.forEach(field =>{
-              UserData[field.name] = row[field.name];
+            RevDData[field.name] = row[field.name];
           });
-          return UserData;
+          return RevDData;
       });
       
       return  res.json(rows); 
@@ -258,11 +290,11 @@ app.get("/refundFPDaily", (req,res)=>{//DAILY
   db.query(queryRFPD, (error, results, fields) =>{
       if(error) return res.json(error)
       const rows=results.map(row => {
-          const UserData={};
+          const RefundDData={};
           fields.forEach(field =>{
-              UserData[field.name] = row[field.name];
+            RefundDData[field.name] = row[field.name];
           });
-          return UserData;
+          return RefundDData;
       });
       
       return  res.json(rows); 
@@ -275,11 +307,11 @@ app.get("/refundFPDaily", (req,res)=>{//DAILY
       db.query(queryRFPW, (error, results, fields) =>{
           if(error) return res.json(error)
           const rows=results.map(row => {
-              const UserData={};
+              const RefundWData={};
               fields.forEach(field =>{
-                  UserData[field.name] = row[field.name];
+                  RefundWData[field.name] = row[field.name];
               });
-              return UserData;
+              return RefundWData;
           });
           
           return  res.json(rows); 
@@ -291,11 +323,11 @@ app.get("/refundFPMonthly", (req,res)=>{//MONTHLY
   db.query(queryRFPM, (error, results, fields) =>{
       if(error) return res.json(error)
       const rows=results.map(row => {
-          const UserData={};
+          const RefundMData={};
           fields.forEach(field =>{
-              UserData[field.name] = row[field.name];
+            RefundMData[field.name] = row[field.name];
           });
-          return UserData;
+          return RefundMData;
       });
       
       return  res.json(rows); 
