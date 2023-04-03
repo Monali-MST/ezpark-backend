@@ -4,13 +4,6 @@ var app = express();
 const dotenv = require("dotenv");
 dotenv.config();
 
-// Initialize Stripe with the private API key
-const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
-
-// Define slots for the Stripe payment
-const slots = new Map([
-  [1, { priceInCents: 10000, name: "Slot Name: Zone C -20" }],
-]);
 //---------------------stripe CheckoutPayButton API start-----------------------
 module.exports = async function stripe_api(req, res) {
   // Set up CORS for the stripe API endpoint
@@ -19,6 +12,18 @@ module.exports = async function stripe_api(req, res) {
       origin: "http://localhost:3000",
     })
   );
+
+  // var price = req.body.price;
+  // var name = req.body.name;
+
+  var price = 10000;
+  var name = "Slot Name: Zone C -20";
+
+  // Initialize Stripe with the private API key
+  const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
+
+  // Define slots for the Stripe payment
+  const slots = new Map([[1, { priceInCents: price, name: name }]]);
 
   //Define a route handler for creating a Stripe checkout session
   try {
