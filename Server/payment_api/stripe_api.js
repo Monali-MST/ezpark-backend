@@ -4,7 +4,6 @@ var app = express();
 const dotenv = require("dotenv");
 dotenv.config();
 
-//---------------------stripe CheckoutPayButton API start-----------------------
 module.exports = async function stripe_api(req, res) {
   // Set up CORS for the stripe API endpoint
   app.use(
@@ -13,11 +12,8 @@ module.exports = async function stripe_api(req, res) {
     })
   );
 
-  // var price = req.body.price;
-  // var name = req.body.name;
-
-  var price = 10000;
-  var name = "Slot Name: Zone C -20";
+  var price = req.body.price;
+  var name = req.body.name;
 
   // Initialize Stripe with the private API key
   const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
@@ -50,4 +46,5 @@ module.exports = async function stripe_api(req, res) {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
+
 };
