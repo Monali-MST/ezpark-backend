@@ -8,6 +8,7 @@ var get_Refund_Level = require('../api_operations_1/operations_1/refund/get_Refu
 var get_refund_request = require('../api_operations_1/operations_1/refund_request/get_refund_request')
 var send_refund_request = require('../api_operations_1/operations_1/refund_request/send_refund_request')
 var reject_refund_request = require('../api_operations_1/operations_1/refund_request/reject_refund_request')
+const save_payment_details = require('../api_operations_1/operations_1/payment/save_payment_details')
 // var pay = require('../api_operations/operations_1/show_system_details/get_Refund_Level')
 
 
@@ -39,6 +40,8 @@ router.delete('/response/reject_refund_request:id' ,(req,res,next)=>{
     reject_refund_request(req , res)
 })
 
-
+router.post('/pay/save_payment_details' ,(req,res,next)=>{        
+    save_payment_details(req , res)
+})
 
 module.exports = router
