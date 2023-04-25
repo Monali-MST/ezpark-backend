@@ -2,9 +2,13 @@ var express = require("express");
 var cors = require("cors");
 var app = express();
 const dotenv = require("dotenv");
+const random_id_genarate = require("../controller/random_id_genarate");
 dotenv.config();
 
+
 module.exports = async function stripe_api(req, res) {
+  const ramdomId= random_id_genarate();
+
   // Set up CORS for the stripe API endpoint
   app.use(
     cors({
@@ -39,12 +43,11 @@ module.exports = async function stripe_api(req, res) {
           quantity: item.quantity, // Use the quantity requested by the customer
         };
       }),
-      success_url: `http://localhost:3000/successpay`, // Redirect URL after a successful payment
+      success_url: `http://localhost:3000/successpay?id=${ramdomId}`, // Include the randomId in the success URL
       cancel_url: `http://localhost:3000/closepay`, // Redirect URL after a canceled payment
     });
     res.json({ url: session.url }); // Return the checkout URL to the client
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
-
 };
