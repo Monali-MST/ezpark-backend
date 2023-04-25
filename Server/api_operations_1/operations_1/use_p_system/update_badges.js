@@ -1,1 +1,0 @@
-//need to update user's badge(badge_level) according to no_of_points with the help of badge_levels table

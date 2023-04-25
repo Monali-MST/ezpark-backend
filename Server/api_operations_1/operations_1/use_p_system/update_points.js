@@ -1,1 +1,0 @@
-// need to update user's no_of_points according to user actions(points_action_id) 

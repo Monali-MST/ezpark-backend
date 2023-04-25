@@ -1,1 +1,0 @@
-// need to calculate discount rate(using discount_details table) for the badge_level and discount amount for a payment 
