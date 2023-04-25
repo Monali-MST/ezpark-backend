@@ -19,10 +19,10 @@ const { updateDiscount } = require('../api_operations_1/operations_1/use_p_syste
 
 
  //point system functions
- router.route('/updateUserPoints').put(updatePoints); // register user
- router.route('/getBadge').post(assignBadges); // register user
- router.route('/calculateDiscount').get(calculateDiscount); // register user
- router.route('/updateDiscount').put(updateDiscount); // register user
+ router.route('/updateUserPoints').put(updatePoints); 
+ router.route('/getBadge').post(assignBadges); 
+ router.route('/calculateDiscount').get(calculateDiscount); 
+ router.route('/updateDiscount').put(updateDiscount); 
 
 //point system details show page
 router.route('/getbadges').get(get_badges);
