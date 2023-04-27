@@ -6,7 +6,7 @@
   "exp_date": "2023-05-11",
   "discount_data": [
     {
-      "discount_name": "Platinum Sales discount",
+      "discount_name": "Gold Sales discount",
       "badge_id": 1,
       "discount_precentage": 65
     },
@@ -16,7 +16,7 @@
       "discount_precentage": 45
     },
     {
-      "discount_name": "Platinum Sales discount",
+      "discount_name": "Bronze Sales discount",
       "badge_id": 3,
       "discount_precentage": 35
     }
