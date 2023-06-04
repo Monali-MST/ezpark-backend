@@ -3,9 +3,9 @@ import {} from "dotenv/config";
 import express from "express";
 import mysql from "mysql";
 import cors from "cors";
-import otpGenerator from 'otp-generator';
+import otpGenerator from "otp-generator";
 
-import  registerMail  from './mailer.js'
+import registerMail from "./mailer.js";
 
 const app = express();
 app.use(express.json());
@@ -176,40 +176,67 @@ app.post("/login", (req, res) => {
   });
 });
 
+// -----------------OTP-----------------
 
-// -----------------OPT-----------------
+app.get("/generateOTP", (req, res) => {
+  generateOTP(req, res);
+});
 
-app.get("/generateOTP", (req,res)=>{
-  generateOTP(req,res);
-})
-
-app.post("/verifyOTP", (req,res)=>{
-  verifyOTP(req,res);
-})
+app.post("/verifyOTP", (req, res) => {
+  verifyOTP(req, res);
+});
 
 /** GET: http://localhost:8000/api/generateOTP */
-export async function generateOTP(req,res){
-  otp =  otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false});
+export async function generateOTP(req, res) {
+  otp = otpGenerator.generate(4, {
+    lowerCaseAlphabets: false,
+    upperCaseAlphabets: false,
+    specialChars: false,
+  });
   console.log(otp);
-res.status(201).send({ code: otp, msg:"OTP" })   
+  res.status(201).send({ code: otp, msg: "OTP" });
 }
 
-
 /** GET: http://localhost:8000/api/verifyOTP */
-export async function verifyOTP(req,res){
+export async function verifyOTP(req, res) {
   const { code } = req.query;
   console.log(otp);
   if (parseInt(otp) === parseInt(code)) {
     otp = null; // reset the OTP value
-   // otpSession = true; // start session for reset password
+    // otpSession = true; // start session for reset password
     return res.status(201).send({ msg: "Verify Successsfully!" });
   }
   return res.status(400).send({ error: "Invalid OTP" });
 }
 
-app.post("/registerMail", (req,res)=>{
-  registerMail(req,res);
-})
+app.post("/registerMail", (req, res) => {
+  registerMail(req, res);
+});
+
+//----------Save Bookings------------
+app.post("/savebooking", (req, res) => {
+  const data = req.body;
+  const sql =
+    "INSERT INTO `ezpark`.`booking` (`BookingID`, `BookedDate`, `StartTime`, `EndTime`, `VehicleNo`, `BookingMethod`) VALUES (?);";
+    const values = [
+      data.BookingID,
+      data.BookedDate,
+      data.StartTime,
+      data.EndTime,
+      data.VehicleNo,
+      data.BookingMethod,
+     
+    ];
+  db.query(sql, [values], function (err, result, fields) {
+    if (err) {
+      console.log(err);
+      res.status(500).send({ err });
+    } else {
+      return res.status(201).send("Data saved successfully!");
+    }
+  });
+});
+//----------Forget password-------------
 
 //------Connect to the Backend Server----------
 app.listen(8800, () => {
