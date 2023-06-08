@@ -7,6 +7,8 @@ import otpGenerator from "otp-generator";
 
 import registerMail from "./mailer.js";
 
+import axios from "axios";
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -119,10 +121,9 @@ app.get("/Refund_Level", (req, res) => {
 //   const values = [
 //     req.body.addPoints,
 //     req.body.currentPoints,
-//   ];
-
+//   ];s
 //   db.query(q, [values[0]+values[1], userId], (err, data) => {
-//     if (err) return res.json(err);
+//     if (err) return res.json(err)s;
 //     return res.json("book has been updated successfully");
 //   });
 // });
@@ -160,6 +161,65 @@ app.post("/user", (req, res) => {
     return res.json("Success");
   });
 });
+
+//-------veh-reg-----------
+// export async function vehicle_reg(req, res) {
+//   const {Vehical} = req.body;
+
+//   Vehical_data.forEach((Vehical) => {
+//     const values = [
+//       Vehical.VehicleNo,
+//       Vehical.VehicleType,
+
+//     ];
+//     const query =
+//       "INSERT INTO `EzPark`.`Vehicle` (`VehicleNo`, `VehicleType`,`Email`) VALUES (?);";
+//     // const values =[
+//     //     req.body.VehicleNo,
+//     //     req.body.Type,
+//     //     req.body.Email
+//     // ]
+//     connection.query(query, [values], (err, data) => {
+//       if (err) return res.json(err);
+//       return res.json("Vehicel added succefully!!");
+//     });
+//   });
+//   for (const vehical_item of Vehical) {
+//       const values = [
+//       Vehical.VehicleNo,
+//       Vehical.VehicleType,
+
+//     ];
+//   }
+// }
+// export async function vehicle_reg(req, res) {
+//   const {Vehical_data} = req.body;
+
+//   for (const vehicle of Vehical_data) {
+//     const query =
+//       "INSERT INTO `EzPark`.`Vehicle` (`VehicleNo`, `VehicleType`,`Email`) VALUES (?);";
+//     // const values =[
+//     //     req.body.VehicleNo,
+//     //     req.body.Type,
+//     //     req.body.Email
+//     // ]
+
+//     const values = [
+//       req.body.VehicleNo,
+//       req.body.VehicleType,
+//       req.body.Email,
+//     ];
+//     connection.query(query, [values], (err, data) => {
+//       if (err) return res.json(err);
+//       return res.json("Vehicel added succefully!!");
+//     });
+//   }
+// }
+
+// app.post("/vehicle", (req, res) => {
+//   vehicle_reg(req, res);
+// });
+
 //--------Login page--------//
 app.post("/login", (req, res) => {
   const query =
@@ -178,7 +238,7 @@ app.post("/login", (req, res) => {
 
 // -----------------OTP-----------------
 
-app.get("/generateOTP", (req, res) => {
+app.post("/generateOTP", (req, res) => {
   generateOTP(req, res);
 });
 
@@ -193,20 +253,62 @@ export async function generateOTP(req, res) {
     upperCaseAlphabets: false,
     specialChars: false,
   });
-  console.log(otp);
-  res.status(201).send({ code: otp, msg: "OTP" });
+
+  const apiURL = 'https://cloud.websms.lk/smsAPI?sendsms';
+  const apiKey = 'hB8Y73E2OTVPBfEGhfBk9ddi95MOFDf7';
+  const apiToken = 'sxX51677694785';
+  const type = 'sms';
+  const from = 'EzPark';
+  const text = "Your EzPark verification code: ";
+  const to = req.body.MobNum; // Replace with the actual phone number
+  const url = `${apiURL}&apikey=${apiKey}&apitoken=${apiToken}&type=${type}&from=${from}&to=${to}&text=${text}${otp}`;
+ 
+  
+  axios.post(url)
+  .then(response => {
+    const query = "INSERT INTO `ezpark`.`otp` (`identifier`, `otp_val`) VALUES ((?), (?));";
+
+    const values = [req.body.MobNum, otp];
+    db.query(query, values, (err, data) => {
+      if (err) return res.json(100);
+      return res.json(200);
+    });
+  })
+  .catch(error => {
+    return res.json('API error:', error);
+  });
+
+
+  
+  // return res.json(otp);
+  // res.status(201).send({ code: otp, msg: "OTP" });
 }
 
 /** GET: http://localhost:8000/api/verifyOTP */
 export async function verifyOTP(req, res) {
-  const { code } = req.query;
-  console.log(otp);
-  if (parseInt(otp) === parseInt(code)) {
-    otp = null; // reset the OTP value
-    // otpSession = true; // start session for reset password
-    return res.status(201).send({ msg: "Verify Successsfully!" });
-  }
-  return res.status(400).send({ error: "Invalid OTP" });
+  const query = "SELECT otp_val FROM ezpark.otp WHERE identifier=(?)";
+  const values = [[req.body.MobNum],[req.body.otp]];
+  db.query(query, [values[0]], (err, data)=>{
+    if(err){
+      return res.json(100);
+    }else if (data.length!=0){
+      if(data[0].otp_val==values[1]){
+        return res.json(200);
+      }else{
+        return res.json(300);
+      }
+    }else{
+      return res.json(100);
+    }
+  })
+  // const { code } = req.query;
+  // console.log(otp);
+  // if (parseInt(otp) === parseInt(code)) {
+  //   otp = null; // reset the OTP value
+  //   // otpSession = true; // start session for reset password
+  //   return res.status(201).send({ msg: "Verify Successsfully!" });
+  // }
+  // return res.status(400).send({ error: "Invalid OTP" });
 }
 
 app.post("/registerMail", (req, res) => {
@@ -218,15 +320,14 @@ app.post("/savebooking", (req, res) => {
   const data = req.body;
   const sql =
     "INSERT INTO `ezpark`.`booking` (`BookingID`, `BookedDate`, `StartTime`, `EndTime`, `VehicleNo`, `BookingMethod`) VALUES (?);";
-    const values = [
-      data.BookingID,
-      data.BookedDate,
-      data.StartTime,
-      data.EndTime,
-      data.VehicleNo,
-      data.BookingMethod,
-     
-    ];
+  const values = [
+    data.BookingID,
+    data.BookedDate,
+    data.StartTime,
+    data.EndTime,
+    data.VehicleNo,
+    data.BookingMethod,
+  ];
   db.query(sql, [values], function (err, result, fields) {
     if (err) {
       console.log(err);
@@ -236,8 +337,75 @@ app.post("/savebooking", (req, res) => {
     }
   });
 });
-//----------Forget password-------------
 
+//----------Forget password-------------
+async function reset(req, res) {
+  const { email } = req.body;
+  const sql = "SELECT * FROM user_details WHERE Email ='?';";
+  db.query(query, [email], (err, data) => {
+    if (err) {
+      return res.status(500).send("Username doesn't exist");
+    } else {
+      if (data.length > 0) {
+        return res.status(404).send("Username  exist");
+      } else {
+        return res.status(404).send("Username doesn't exist");
+      }
+      // console.log(data);
+    }
+  });
+}
+
+app.post("/freset", (req, res) => {
+  reset(req, res);
+});
+
+//-------Update profile-----------
+
+// API endpoint for updating user profile
+app.put("/api/users/:userId", (req, res) => {
+  const userId = req.params.userId;
+  const { firstName, lastName, mobileNumber,email,password } = req.body;
+
+  // Retrieve the user's current profile from the database
+  db.query("SELECT * FROM users WHERE id = ?", [userId], (err, results) => {
+    if (err) {
+      res.status(500).json({ error: "Failed to retrieve user profile" });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const user = results[0];
+
+    // Update the user's profile with new values
+    const updatedUser = {
+      ...user,
+      Fname: firstName || user.firstName,
+      Lname: lastName || user.lastName,
+      MobNo: mobileNumber || user.mobileNumber,
+      email:email||user.email,
+      password:password||user.password
+    };
+
+    // Save the updated profile to the database
+    db.query(
+      "UPDATE users SET name = ?, email = ?, bio = ? WHERE id = ?",
+      [updatedUser.firstName, updatedUser.lastName, updatedUser.mobileNumber,updatedUser.email,updatedUser.password,userId],
+      (err) => {
+        if (err) {
+          res.status(500).json({ error: "Failed to update user profile" });
+          return;
+        }
+
+        res.json({ message: "User profile updated successfully" });
+      }
+    );
+  });
+});
 //------Connect to the Backend Server----------
 app.listen(8800, () => {
   console.log("Connected to backend!!");
